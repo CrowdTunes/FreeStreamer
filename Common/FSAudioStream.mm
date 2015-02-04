@@ -673,7 +673,7 @@ public:
 - (void)notifyPlaybackStopped
 {
 #if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 40000)
-    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+    //[[AVAudioSession sharedInstance] setActive:NO error:nil];
 #endif
     
     [self notifyStateChange:kFsAudioStreamStopped];
@@ -711,7 +711,7 @@ public:
 - (void)notifyPlaybackFailed
 {
 #if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 40000)
-    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+//    [[AVAudioSession sharedInstance] setActive:NO error:nil];
 #endif
     
     [self notifyStateChange:kFsAudioStreamFailed];
@@ -856,6 +856,7 @@ public:
 
 -(NSString *)description
 {
+    return @"";
     return [NSString stringWithFormat:@"[FreeStreamer %@] URL: %@\nbufferCount: %i\nbufferSize: %i\nmaxPacketDescs: %i\ndecodeQueueSize: %i\nhttpConnectionBufferSize: %i\noutputSampleRate: %f\noutputNumChannels: %ld\nbounceInterval: %i\nmaxBounceCount: %i\nstartupWatchdogPeriod: %i\nmaxPrebufferedByteCount: %i\nformat: %@\nuserAgent: %@\ncacheDirectory: %@\npredefinedHttpHeaderValues: %@\ncacheEnabled: %@\nseekingFromCacheEnabled: %@\nmaxDiskCacheSize: %i\nrequiredInitialPrebufferedByteCountForContinuousStream: %i\nrequiredInitialPrebufferedByteCountForNonContinuousStream: %i",
             freeStreamerReleaseVersion(),
             self.url,
