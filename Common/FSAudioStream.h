@@ -7,6 +7,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#include <AudioToolbox/AudioToolbox.h>
 
 /**
  * The major version of the current release.
@@ -408,6 +409,10 @@ NSString*             freeStreamerReleaseVersion();
  * Delegate.
  */
 @property (nonatomic,unsafe_unretained) IBOutlet id<FSPCMAudioStreamDelegate> delegate;
+
+@property (readonly) AudioStreamBasicDescription srcFormat;
+@property (readonly) AudioStreamBasicDescription dstFormat;
+
 
 @end
 

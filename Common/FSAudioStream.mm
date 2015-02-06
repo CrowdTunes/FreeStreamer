@@ -885,6 +885,14 @@ public:
     return _audioStream->durationInSeconds();
 }
 
+- (AudioStreamBasicDescription)srcFormat {
+    return _audioStream->srcFormat();
+}
+
+- (AudioStreamBasicDescription)dstFormat {
+    return _audioStream->dstFormat();
+}
+
 -(NSString *)description
 {
     return @"";
@@ -1269,6 +1277,14 @@ public:
 -(NSString *)description
 {
     return [_private description];
+}
+
+-(AudioStreamBasicDescription)srcFormat {
+    return [_private srcFormat];
+}
+
+-(AudioStreamBasicDescription)dstFormat {
+    return [_private dstFormat];
 }
 
 @end
