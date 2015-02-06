@@ -115,6 +115,9 @@ public:
     void streamEndEncountered();
     void streamErrorOccurred(CFStringRef errorDesc);
     void streamMetaDataAvailable(std::map<CFStringRef,CFStringRef> metaData);
+    
+    AudioStreamBasicDescription srcFormat();
+    AudioStreamBasicDescription dstFormat();
 
 private:
     

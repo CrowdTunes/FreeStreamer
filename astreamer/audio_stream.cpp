@@ -567,6 +567,14 @@ void Audio_Stream::setDefaultContentType(CFStringRef defaultContentType)
     }
 }
     
+    AudioStreamBasicDescription Audio_Stream::srcFormat() {
+        return m_srcFormat;
+    }
+    
+    AudioStreamBasicDescription Audio_Stream::dstFormat() {
+        return m_dstFormat;
+    }
+    
 void Audio_Stream::setSeekOffset(float offset)
 {
     m_seekOffset = offset;
