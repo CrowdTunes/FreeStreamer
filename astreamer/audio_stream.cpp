@@ -28,7 +28,8 @@
 #if !defined (AS_DEBUG)
 #define AS_TRACE(...) do {} while (0)
 #else
-#define AS_TRACE(...) printf(__VA_ARGS__)
+#include <pthread.h>
+#define AS_TRACE(...) printf("[audio_stream.cpp:%i thread %x] ", __LINE__, pthread_mach_thread_np(pthread_self())); printf(__VA_ARGS__)
 #endif
 
 namespace astreamer {
@@ -364,7 +365,11 @@ float Audio_Stream::durationInSeconds()
     
 void Audio_Stream::seekToOffset(float offset)
 {
-    if (state() == SEEKING) {
+    if (state() != PLAYING) {
+        // Do not allow seeking if we are not currently playing the stream
+        // This allows a previous seek to be completed
+        AS_TRACE("the stream is not playing, disallowing this seek\n");
+        
         return;
     }
     
@@ -422,6 +427,22 @@ void Audio_Stream::seekToOffset(float offset)
         }
     } else {
         AS_TRACE("Seeking from cache disabled\n");
+    }
+    
+    // Check if this cache lookup actually gives us a reasonable buffer
+    if (foundCachedPacket) {
+        int count = 0;
+        queued_packet_t *cur = seekPacket;
+        while (cur) {
+            cur = cur->next;
+            count++;
+        }
+        
+        if (count < config->decodeQueueSize) {
+            AS_TRACE("The seeked region too close to the end of the buffer, reopening the stream, count %i\n", count);
+            
+            foundCachedPacket = false;
+        }
     }
     
     if (!foundCachedPacket) {
@@ -728,6 +749,8 @@ void Audio_Stream::audioQueueBuffersEmpty()
     if (count == 0 && m_inputStreamRunning && FAILED != state()) {
         Stream_Configuration *config = Stream_Configuration::configuration();
         
+        m_playPacket = m_queuedHead;
+        
         // Always make sure we are scheduled to receive data if we start buffering
         m_inputStream->setScheduledInRunLoop(true);
         
@@ -954,6 +977,14 @@ void Audio_Stream::streamEndEncountered()
     
     if (!m_inputStreamRunning) {
         AS_TRACE("%s: stray callback detected!\n", __PRETTY_FUNCTION__);
+        return;
+    }
+
+    if (!(contentLength() > 0)) {
+        /* Continuous streams are not supposed to end */
+        
+        closeAndSignalError(AS_ERR_NETWORK, CFSTR("Stream ended abruptly"));
+        
         return;
     }
     
@@ -1243,6 +1274,7 @@ void Audio_Stream::enqueueCachedData(int minPacketsRequired)
     
     Stream_Configuration *config = Stream_Configuration::configuration();
     
+    const bool continuous = (!(contentLength() > 0));
     const int count = playbackDataCount();
     
     if (!m_initialBufferingCompleted) {
@@ -1252,7 +1284,7 @@ void Audio_Stream::enqueueCachedData(int minPacketsRequired)
         
         int lim;
         
-        if (!(contentLength() > 0)) {
+        if (continuous) {
             // Continuous stream
             lim = config->requiredInitialPrebufferedByteCountForContinuousStream;
             AS_TRACE("continuous stream, %i bytes must be cached to start the playback\n", lim);
@@ -1335,8 +1367,14 @@ void Audio_Stream::enqueueCachedData(int minPacketsRequired)
                 m_delegate->samplesAvailable(outputBufferList, description);
             }
             
-            if (m_cachedDataSize >= config->maxPrebufferedByteCount) {
+            // For continuous streams, we don't need to accummulate the data for seeking
+            if (continuous) {
                 cleanupCachedData();
+            } else {
+                // For non-continuous streams, keep previous data for seeking
+                if (m_cachedDataSize >= config->maxPrebufferedByteCount) {
+                    cleanupCachedData();
+                }
             }
         } else {
             AS_TRACE("AudioConverterFillComplexBuffer failed, error %i\n", err);
@@ -1370,6 +1408,10 @@ void Audio_Stream::cleanupCachedData()
         
         free(cur);
         cur = tmp;
+        if (cur == m_playPacket){
+            keepCleaning = false;
+            AS_TRACE("Found m_playPacket\n");
+        }
     }
     m_queuedHead = cur;
     
