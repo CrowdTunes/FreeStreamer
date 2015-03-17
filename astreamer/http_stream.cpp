@@ -295,7 +295,7 @@ CFReadStreamRef HTTP_Stream::createReadStream(CFURLRef url)
         CFHTTPMessageSetHeaderFieldValue(request, httpUserAgentHeader, config->userAgent);
     }
     
-    CFHTTPMessageSetHeaderFieldValue(request, icyMetaDataHeader, icyMetaDataValue);
+    //CFHTTPMessageSetHeaderFieldValue(request, icyMetaDataHeader, icyMetaDataValue);
     
     if (m_position.start > 0 && m_position.end > m_position.start) {
         CFStringRef rangeHeaderValue = CFStringCreateWithFormat(NULL,
