@@ -96,6 +96,7 @@ public:
     CFStringRef createCacheIdentifierForURL(CFURLRef url);
     
     size_t cachedDataSize();
+    size_t outputBufferSize();
     bool strictContentTypeChecking();
     float bitrate();
     

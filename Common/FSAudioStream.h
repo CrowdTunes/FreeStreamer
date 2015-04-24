@@ -369,6 +369,7 @@ NSString*             freeStreamerReleaseVersion();
  * This property has the number of bytes buffered for this stream.
  */
 @property (nonatomic,readonly) size_t prebufferedByteCount;
+@property (nonatomic,readonly) size_t outputByteCount;
 /**
  * This property holds the current playback volume of the stream,
  * from 0.0 to 1.0.

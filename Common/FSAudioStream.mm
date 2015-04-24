@@ -209,6 +209,7 @@ public:
 @property (nonatomic,assign) BOOL internetConnectionAvailable;
 @property (nonatomic,assign) NSUInteger restartCount;
 @property (readonly) size_t prebufferedByteCount;
+@property (readonly) size_t outputByteCount;
 @property (readonly) FSSeekByteOffset currentSeekByteOffset;
 @property (readonly) float bitRate;
 @property (readonly) FSStreamConfiguration *configuration;
@@ -509,6 +510,11 @@ public:
 - (size_t)prebufferedByteCount
 {
     return _audioStream->cachedDataSize();
+}
+
+- (size_t)outputByteCount
+{
+    return _audioStream->outputBufferSize();
 }
 
 - (FSSeekByteOffset)currentSeekByteOffset
@@ -1202,6 +1208,11 @@ public:
 - (size_t)prebufferedByteCount
 {
     return _private.prebufferedByteCount;
+}
+
+- (size_t)outputByteCount
+{
+    return _private.outputByteCount;
 }
 
 - (float)volume

@@ -670,8 +670,15 @@ CFStringRef Audio_Stream::createCacheIdentifierForURL(CFURLRef url)
     return cacheIdentifier;
 }
     
+size_t Audio_Stream::outputBufferSize()
+{
+    size_t foo = audioQueue()->m_buffersUsed * m_outputBufferSize;
+    return foo;
+}
+    
 size_t Audio_Stream::cachedDataSize()
 {
+    cleanupCachedData();
     return m_cachedDataSize;
 }
     
@@ -1629,6 +1636,7 @@ void Audio_Stream::streamDataCallback(void *inClientData, UInt32 inNumberBytes, 
         }
         
         THIS->m_cachedDataSize += size;
+        AS_TRACE("cache size: %zu", THIS->m_cachedDataSize);
         
         THIS->m_packetIdentifier++;
         

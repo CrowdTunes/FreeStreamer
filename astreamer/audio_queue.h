@@ -50,6 +50,7 @@ public:
     void setPlayRate(float playRate);
     
     AudioTimeStamp currentTime();
+    UInt32 m_buffersUsed;                                            // how many buffers are used
 	
 private:
     Audio_Queue(const Audio_Queue&);
@@ -65,7 +66,6 @@ private:
     UInt32 m_fillBufferIndex;                                        // the index of the audioQueueBuffer that is being filled
     UInt32 m_bytesFilled;                                            // how many bytes have been filled
     UInt32 m_packetsFilled;                                          // how many packets have been filled
-    UInt32 m_buffersUsed;                                            // how many buffers are used
     
     bool m_audioQueueStarted;                                        // flag to indicate that the queue has been started
     bool *m_bufferInUse;                                  // flags to indicate that a buffer is still in use
