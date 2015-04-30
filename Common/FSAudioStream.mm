@@ -75,9 +75,9 @@ static NSInteger sortCacheObjects(id co1, id co2, void *keyForSorting)
 #endif
         
         self.bufferCount    = 8;
-        self.bufferSize     = 32768;
+        self.bufferSize     = 8192;
         self.maxPacketDescs = 512;
-        self.decodeQueueSize = 128;
+        self.decodeQueueSize = 24;
         self.httpConnectionBufferSize = 1024;
         self.outputSampleRate = 44100;
         self.outputNumChannels = 2;
@@ -90,7 +90,7 @@ static NSInteger sortCacheObjects(id co1, id co2, void *keyForSorting)
         self.seekingFromCacheEnabled = YES;
         self.maxDiskCacheSize = 100000000;
         self.requiredInitialPrebufferedByteCountForContinuousStream = 100000;
-        self.requiredInitialPrebufferedByteCountForNonContinuousStream = 50000;
+        self.requiredInitialPrebufferedByteCountForNonContinuousStream = 20000;
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         
