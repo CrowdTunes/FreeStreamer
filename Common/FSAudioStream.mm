@@ -74,7 +74,7 @@ static NSInteger sortCacheObjects(id co1, id co2, void *keyForSorting)
         [systemVersion appendString:@"OS X"];
 #endif
         
-        self.bufferCount    = 128;
+        self.bufferCount    = 64;
         self.bufferSize     = 8192;
         self.maxPacketDescs = 512;
         self.decodeQueueSize = 24;
