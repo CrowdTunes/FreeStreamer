@@ -1373,14 +1373,14 @@ void Audio_Stream::enqueueCachedData(int minPacketsRequired)
             
             m_audioQueueConsumedPackets = true;
             
+            if (m_delegate) {
+                m_delegate->samplesAvailable(outputBufferList, description);
+            }
+            
             audioQueue()->handleAudioPackets(outputBufferList.mBuffers[0].mDataByteSize,
                                                    outputBufferList.mNumberBuffers,
                                                    outputBufferList.mBuffers[0].mData,
                                                    &description);
-            
-            if (m_delegate) {
-                m_delegate->samplesAvailable(outputBufferList, description);
-            }
             
             // For continuous streams, we don't need to accummulate the data for seeking
             if (continuous) {
